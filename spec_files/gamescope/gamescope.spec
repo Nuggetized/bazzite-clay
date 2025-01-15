@@ -2,10 +2,13 @@
 
 %global _default_patch_fuzz 2
 %global build_timestamp %(date +"%Y%m%d")
-%global gamescope_tag 3.15.11
+#global gamescope_tag 3.15.11
+%global gamescope_commit 4da5e4a37560f9b3c85af2679330f9ec292c8ee1 
+%define short_commit %(echo %{gamescope_commit} | cut -c1-8)
 
 Name:           gamescope
-Version:        100.%{gamescope_tag}
+#Version:        100.%{gamescope_tag}
+Version:        105.%{short_commit}
 Release:        1.bazzite
 Summary:        Micro-compositor for video games on Wayland
 
@@ -17,13 +20,9 @@ Source0:        stb.pc
 
 Patch0:         0001-cstdint.patch
 
-# https://github.com/ChimeraOS/gamescope
-Patch1:         chimeraos.patch
 # https://hhd.dev/
-Patch2:         disable-steam-touch-click-atom.patch
-Patch3:         v2-0001-always-send-ctrl-1-2-to-steam-s-wayland-session.patch
-# https://github.com/ValveSoftware/gamescope/issues/1369
-Patch4:         revert-299bc34.patch
+# https://github.com/ChimeraOS/gamescope
+Patch1:         handheld.patch
 
 BuildRequires:  meson >= 0.54.0
 BuildRequires:  ninja-build
@@ -56,11 +55,12 @@ BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(libpipewire-0.3)
 BuildRequires:  pkgconfig(libavif)
-BuildRequires:  (pkgconfig(wlroots) >= 0.18.0 with pkgconfig(wlroots) < 0.19.0)
-BuildRequires:  (pkgconfig(libliftoff) >= 0.4.1 with pkgconfig(libliftoff) < 0.5)
+BuildRequires:  pkgconfig(wlroots)
+BuildRequires:  pkgconfig(libliftoff)
 BuildRequires:  pkgconfig(libcap)
 BuildRequires:  pkgconfig(hwdata)
 BuildRequires:  pkgconfig(lcms2)
+BuildRequires:  pkgconfig(luajit)
 BuildRequires:  spirv-headers-devel
 # Enforce the the minimum EVR to contain fixes for all of:
 # CVE-2021-28021 CVE-2021-42715 CVE-2021-42716 CVE-2022-28041 CVE-2023-43898
@@ -96,8 +96,10 @@ Summary:	libs for %{name}
 %summary
 
 %prep
-git clone --depth 1 --branch %{gamescope_tag} %{url}.git
+# git clone --depth 1 --branch %%{gamescope_tag} %%{url}.git
+git clone %{url}.git
 cd gamescope
+git checkout %{gamescope_commit} 
 git submodule update --init --recursive
 mkdir -p pkgconfig
 cp %{SOURCE0} pkgconfig/stb.pc
@@ -110,7 +112,8 @@ sed -i 's^../thirdparty/SPIRV-Headers/include/spirv/^/usr/include/spirv/^' src/m
 %build
 cd gamescope
 export PKG_CONFIG_PATH=pkgconfig
-%meson --auto-features=enabled -Dforce_fallback_for=vkroots,wlroots,libliftoff
+%meson \
+    -Dforce_fallback_for=libdisplay-info,libliftoff,wlroots,vkroots
 %meson_build
 
 %install
@@ -124,6 +127,7 @@ cd gamescope
 %{_bindir}/gamescopectl
 %{_bindir}/gamescopestream
 %{_bindir}/gamescopereaper
+%{_datadir}/gamescope/*
 
 %files libs
 %{_libdir}/libVkLayer_FROG_gamescope_wsi_*.so

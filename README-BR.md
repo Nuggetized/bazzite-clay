@@ -42,7 +42,7 @@
 
 O Bazzite é feito a partir do [ublue-os/main](https://github.com/ublue-os/main) e do [ublue-os/nvidia](https://github.com/ublue-os/nvidia) utilizando tecnologia [Fedora](https://fedoraproject.org/), o que significa que suporte expandido a hardware e drivers estão inclusos. Suplementarmente, o Bazzite traz os seguintes recursos:
 
-- Usa o [kernel fsync](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/) para suportar mais hardware e HDR, dentre outros vários patches.
+- Usa o [kernel bazzite](https://github.com/hhd-dev/kernel-bazzite) para possibilitar HDR e expandir o suporte a hardware, dentre outros vários patches - baseado no [kernel fsync](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/).
 - HDR disponível no Game mode.
 - NVK disponível em versões não-Nvidia.
 - Suporte completo à decodificação de hardware em codecs H264.
@@ -51,7 +51,7 @@ O Bazzite é feito a partir do [ublue-os/main](https://github.com/ublue-os/main)
 - Suporte completo a [DisplayLink](https://www.synaptics.com/products/displaylink-graphics).
 - Inclui os temas do SteamOS para KDE da Valve.
 - Inclui temas GTK3/4 semelhantes ao Vapor e VGUI2 do SteamOS. Instale o [Gradience](https://flathub.org/apps/com.github.GradienceTeam.Gradience) para usá-los.
-- [LatencyFleX](https://github.com/ishitatsuyuki/LatencyFleX), [vkBasalt](https://github.com/DadSchoorse/vkBasalt), [MangoHud](https://github.com/flightlessmango/Mangohud), e [OBS VkCapture](https://github.com/nowrep/obs-vkcapture) instalados e disponíveis por padrão
+- [LatencyFleX](https://github.com/ishitatsuyuki/LatencyFleX), [vkBasalt](https://github.com/DadSchoorse/vkBasalt), [MangoHud](https://github.com/flightlessmango/Mangohud), e [OBS VkCapture](https://github.com/nowrep/obs-vkcapture) instalados e disponíveis por padrão.
 - [Switcheroo-Control com patches](https://copr.fedorainfracloud.org/coprs/sentry/switcheroo-control_discrete/) que consertam a troca entre iGPU/dGPU em casos em que é quebrada por padrão.
 - Suporte a [Wallpaper Engine](https://www.wallpaperengine.io/en). <sub><sup>(Só no KDE)</sup></sub>
 - [Extensão do shell ROM Properties Page](https://github.com/GerbilSoft/rom-properties) inclusa.
@@ -132,7 +132,7 @@ Imagem feita pra ser utilizada como alternativa ao SteamOS no Steam Deck, e para
     - Suporte a overclocking de tela. Por exemplo, escreva `CUSTOM_REFRESH_RATES=30-68` em `/etc/environment`. Taxas de atualização mínima e máxima mudam de portátil pra portátil!
     - Modificou seu Steam Deck pra ter 32GB de RAM? Aproveite o dobro da quantia máxima de VRAM, aplicada automaticamente. <sup><sub>(Quer emprestar esse talento com solda?)</sub></sup>
 - Serviços específicos para o hardware do Steam Deck podem ser desabilitados rodando `ujust disable-bios-updates` e `ujust disable-firmware-updates` no terminal. Eles são desabilitados automaticamente em hardware que não seja o Deck, e em Decks com telas DeckHD ou mods de 32GB de RAM.
-- Mais informações sobre as imagens Bazzite Steam Deck podem ser encontradas [aqui](https://universal-blue.discourse.group/docs?topic=37).
+- Mais informações sobre as imagens Bazzite Steam Deck podem ser encontradas [aqui](https://docs.bazzite.gg/Handheld_and_HTPC_edition/Steam_Gaming_Mode/).
 
 > [!WARNING]  
 > **Devido a um bug upstream, o Bazzite não pode ser utilizado em Steam Decks com 64GB de armazenamento eMMC no momento. Fazer um upgrade de armazenamento resolve o problema.**
@@ -148,7 +148,7 @@ rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/bazzite-deck:stabl
 
 #### Portáteis Alternativos
 
-Por favor confira nossa [wiki pra portáteis](https://universal-blue.discourse.group/docs?topic=1038) pras mudanças de configuração necessárias e plugins do Decky Loader pro Steam Gaming Mode do seu portátil específico.
+Por favor confira nossa [wiki pra portáteis](https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/) pras mudanças de configuração necessárias e plugins do Decky Loader pro Steam Gaming Mode do seu portátil específico.
 
 **Certifique-se de ler a [documentação do hhd](https://github.com/hhd-dev/hhd#after-install), alguns portáteis requerem mudanças de configuração/ajustes específicos pra funcionar corretamente.**
 
@@ -372,4 +372,4 @@ Nós também incluímos uma configuração pro app popular [pull](https://github
 
 - Siga o Universal Blue no [Mastodon](https://fosstodon.org/@UniversalBlue).
 
-[**Veja a lista completa das mídias sociais e documentação do Bazzite**](https://universal-blue.discourse.group/docs?topic=8).
+[**Veja a lista completa das mídias sociais e documentação do Bazzite**](https://docs.bazzite.gg/Resources/).

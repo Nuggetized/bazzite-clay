@@ -3,37 +3,22 @@
 # Install LACT for overclocking & undervolting AMD GPUs
 install-lact:
     #!/usr/bin/bash
-    IMAGE_INFO="/usr/share/ublue-os/image-info.json"
-    BASE_IMAGE_NAME=$(jq -r '."base-image-name"' < $IMAGE_INFO)
     ublue-update --wait
+    rpm-ostree kargs --append-if-missing=$(printf 'amdgpu.ppfeaturemask=0x%x\n' "$(($(cat /sys/module/amdgpu/parameters/ppfeaturemask) | 0x4000))")
     if [[ ${BASE_IMAGE_NAME} == 'silverblue' ]]; then
-        echo 'Installing LACT Libadwaita...'
-        wget \
-          $(curl -s https://api.github.com/repos/ilya-zlobintsev/LACT/releases/latest | \
-          jq -r ".assets[] | select(.name | test(\"lact-libadwaita.*fedora-$(rpm -E %fedora)\")) | .browser_download_url") \
-          -O /tmp/lact.rpm
+        rpm-ostree install -y lact-libadwaita
     else
-        echo 'Installing LACT...'
-        wget \
-          $(curl -s https://api.github.com/repos/ilya-zlobintsev/LACT/releases/latest | \
-          jq -r ".assets[] | select(.name | test(\"lact-[0-9].*fedora-$(rpm -E %fedora)\")) | .browser_download_url") \
-          -O /tmp/lact.rpm
+        rpm-ostree install -y lact
     fi
-    rpm-ostree install --apply-live -y /tmp/lact.rpm
-    sudo systemctl enable --now lactd
-    rm /tmp/lact.rpm
-    echo 'Complete.'
+    echo 'Complete, please reboot to apply changes.'
 
 # Install CoolerControl, a GUI for viewing all your system's sensors and for creating custom fan and pump profiles based on any available temperature sensor28
 install-coolercontrol:
     #!/usr/bin/bash
     ublue-update --wait
     sudo wget https://copr.fedorainfracloud.org/coprs/codifryed/CoolerControl/repo/fedora-$(rpm -E %fedora)/codifryed-CoolerControl-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_codifryed-CoolerControl.repo
-    rpm-ostree install --apply-live -y liquidctl coolercontrol
-    systemctl enable coolercontrold.service
-    mkdir -p $HOME/.config/autostart
-    cp /usr/share/applications/org.coolercontrol.CoolerControl.desktop $HOME/.config/autostart/org.coolercontrol.CoolerControl.desktop
-    echo 'Complete.'
+    rpm-ostree install -y liquidctl coolercontrol
+    echo 'Complete, please reboot to apply changes.'
 
 alias get-steamcmd := install-steamcmd
 
@@ -146,16 +131,26 @@ install-scrcpy: distrobox-check-fedora
 install-opentabletdriver:
     #!/usr/bin/bash
     source /usr/lib/ujust/ujust.sh
-    if grep -qvz "arch" <<< $(distrobox list); then \
-      Assemble noconfirmcreate "" "arch"; \
-    fi && \
-    distrobox enter -n arch -- bash -c 'paru -Syu --noconfirm && paru -S opentabletdriver --noconfirm' && \
-    mkdir -p ~/.config/systemd/user/ && \
-    rm -f ~/.config/systemd/user/arch-opentabletdriver.service && \
-    wget https://raw.githubusercontent.com/ublue-os/bazzite/main/post_install_files/OpenTabletDriver/opentabletdriver.service -O ~/.config/systemd/user/arch-opentabletdriver.service && \
+    echo "Installing OpenTabletDriver..."
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && \
+    flatpak --system install -y flathub net.opentabletdriver.OpenTabletDriver && \
+    mkdir -p $HOME/.config/OpenTabletDriver && \
+    flatpak override --user --filesystem=xdg-config/OpenTabletDriver net.opentabletdriver.OpenTabletDriver && \
+    curl -s https://raw.githubusercontent.com/flathub/net.opentabletdriver.OpenTabletDriver/refs/heads/master/scripts/opentabletdriver.service > ~/.config/systemd/user/opentabletdriver.service  && \
     systemctl --user daemon-reload && \
-    systemctl enable --user --now arch-opentabletdriver.service && \
-    distrobox enter -n arch -- bash -c 'distrobox-export --app otd-gui'
+    systemctl enable --user --now opentabletdriver.service
+
+# Install Docker, a platform designed to help developers build, share, and run container applications
+install-docker:
+    #!/usr/bin/bash
+    sudo mkdir -p /var/lib/docker
+    echo 'Creating Docker group.'
+    sudo groupadd --gid 252 docker
+    echo 'Setting up Docker Distrobox Container.'
+    distrobox assemble create --replace --file /etc/distrobox/docker.ini --name docker
+    echo 'Installing docker-cli for the host.'
+    brew install docker
+    echo 'Complete.'
 
 # Create fedora distrobox if it doesn't exist
 [private]

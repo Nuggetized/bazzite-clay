@@ -42,7 +42,7 @@
 
 Bazzite is built from [ublue-os/main](https://github.com/ublue-os/main) and [ublue-os/nvidia](https://github.com/ublue-os/nvidia) using [Fedora](https://fedoraproject.org/) technology, which means expanded hardware support and built in drivers are included. Additionally, Bazzite adds the following features:
 
-- Uses the [fsync kernel](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/) to achieve HDR and expanded hardware support, among numerous other included patches.
+- Uses the [bazzite kernel](https://github.com/hhd-dev/kernel-bazzite) to achieve HDR and expanded hardware support, among numerous other included patches - based off of the [fsync kernel](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/).
 - HDR available in Game mode.
 - NVK available on non-Nvidia builds.
 - Full hardware accelerated codec support for H264 decoding.
@@ -373,4 +373,4 @@ We also ship a config for the popular [pull app](https://github.com/apps/pull) i
 
 - Follow Universal Blue on [Mastodon](https://fosstodon.org/@UniversalBlue).
 
-[**View the full list of Bazzite resources and social presence**](https://universal-blue.discourse.group/docs?topic=8).
+[**View the full list of Bazzite resources and social presence**](https://docs.bazzite.gg/Resources/).
